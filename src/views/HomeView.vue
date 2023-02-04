@@ -1,8 +1,22 @@
 <template>
 	<main class="login">
+		<div v-if="(loginStore.user === false)">
 		<section class="forms">
-
-			<form class="register" @submit.prevent="registerForm">
+			<form  class="login" @submit.prevent="loginForm">
+				<h2>Login</h2>
+				<input 
+					type="email" 
+					placeholder="Email address"
+					v-model="login_form.email" />
+				<input 
+					type="password" 
+					placeholder="Password" 
+					v-model="login_form.password" />
+				<input 
+					type="submit" 
+					value="Login" />
+			</form>
+			<form  class="register" @submit.prevent="registerForm">
 				<h2>Register</h2>
 				<input 
 					type="email" 
@@ -17,31 +31,21 @@
 					value="Register" />
 			</form>
 
-			<form class="login" @submit.prevent="loginForm">
-				<h2>Login</h2>
-				<input 
-					type="email" 
-					placeholder="Email address"
-					v-model="login_form.email" />
-				<input 
-					type="password" 
-					placeholder="Password" 
-					v-model="login_form.password" />
-				<input 
-					type="submit" 
-					value="Login" />
-			</form>
-
 		</section>
+		</div>
 	</main>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref , onMounted } from 'vue';
 import { useLoginStore } from '@/stores/index.js';
+
 
 const loginStore = useLoginStore();
 
+onMounted(() => {
+	loginStore.fetchUser();
+})
 
 const login_form = ref({
   email: '',

@@ -6,19 +6,21 @@ import { auth } from '../firebase/firebase';
 import { 
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    signOut 
+    signOut, setPersistence, browserSessionPersistence, browserLocalPersistence
   } from 'firebase/auth';
 
 
   export const useLoginStore = defineStore({
     id: 'loginStore',
     state: () => ({
-        user: null
+        user: false
     }),
     actions: {
         async login(email, password) {
             try {
+                await setPersistence(auth,browserSessionPersistence);
                 await signInWithEmailAndPassword(auth, email, password)
+                
               } catch (error) {
                 switch(error.code) {
                   case 'auth/user-not-found':
@@ -36,7 +38,6 @@ import {
 
               this.user = auth.currentUser;
         },
-
         async register (email, password){
             console.log(email, password);
             try {
@@ -63,6 +64,24 @@ import {
               }
 
               this.user = auth.currentUser;
+        },
+
+        async logout() {
+          await signOut(auth);
+          this.user = false;
+          console.log('user Logged out');
+        },
+
+        fetchUser() {
+          auth.onAuthStateChanged( user => {
+            if (user === null) {
+              this.user = false;
+              console.log('Null')
+            } else {
+              this.user = user;
+              console.log(user)
+            }
+          })
         }
     }
   })

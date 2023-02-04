@@ -1,6 +1,12 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from 'vue-router';
+import { ref } from 'vue';
+import HelloWorld from './components/HelloWorld.vue';
+import { useLoginStore } from '@/stores/index.js';
+
+
+const loginStore = useLoginStore();
+
 </script>
 
 <template>
@@ -11,6 +17,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
+      <button @click="loginStore.logout" v-if="(loginStore.user !== false)">LogOut</button>
     </div>
   </header>
 
