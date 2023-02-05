@@ -13,14 +13,16 @@ import {
   export const useLoginStore = defineStore({
     id: 'loginStore',
     state: () => ({
-        user: false
+        user: false,
+        countdown: 20,
+        intervalId: null
     }),
     actions: {
         async login(email, password) {
             try {
                 await setPersistence(auth,browserSessionPersistence);
                 await signInWithEmailAndPassword(auth, email, password)
-                
+               
               } catch (error) {
                 switch(error.code) {
                   case 'auth/user-not-found':
@@ -71,6 +73,16 @@ import {
           this.user = false;
           console.log('user Logged out');
         },
+
+         countTimer() {
+          this.intervalId = setInterval(() => {
+            this.countdown--;
+            if (this.countdown === 0) {
+                clearInterval(this.intervalId);
+                 signOut(auth);
+            }
+          }, 1000);
+        }, 
 
         fetchUser() {
           auth.onAuthStateChanged( user => {
