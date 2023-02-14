@@ -17,6 +17,7 @@ const loginStore = useLoginStore();
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
+      <h1> Hello {{  loginStore.user.displayName }}</h1>
       <button @click="loginStore.logout" v-if="(loginStore.user !== false)">LogOut</button>
     </div>
   </header>

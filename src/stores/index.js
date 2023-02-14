@@ -6,7 +6,12 @@ import { auth } from '../firebase/firebase';
 import { 
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    signOut, setPersistence, browserSessionPersistence, browserLocalPersistence
+    signOut, setPersistence,
+     browserSessionPersistence, 
+     browserLocalPersistence, 
+     updateProfile, 
+     sendEmailVerification,
+     sendPasswordResetEmail
   } from 'firebase/auth';
 
 
@@ -21,7 +26,8 @@ import {
         async login(email, password) {
             try {
                 await setPersistence(auth,browserSessionPersistence);
-                await signInWithEmailAndPassword(auth, email, password)
+                await signInWithEmailAndPassword(auth, email, password);
+                
                
               } catch (error) {
                 switch(error.code) {
@@ -40,11 +46,15 @@ import {
 
               this.user = auth.currentUser;
         },
-        async register (email, password){
-            console.log(email, password);
+        async register (email, password, name){
+            console.log(email, password, name);
             try {
-                await createUserWithEmailAndPassword(auth, email, password)
+                await createUserWithEmailAndPassword(auth, email, password);
+                await updateProfile(auth.currentUser, { displayName: name });
+                await sendEmailVerification(auth.currentUser);
+                
               } catch (error) {
+                console.log('Registration error:', error)
                 switch(error.code) {
                   case 'auth/email-already-in-use':
                     alert("Email already in use")
@@ -74,15 +84,24 @@ import {
           console.log('user Logged out');
         },
 
-         countTimer() {
-          this.intervalId = setInterval(() => {
-            this.countdown--;
-            if (this.countdown === 0) {
-                clearInterval(this.intervalId);
-                 signOut(auth);
-            }
-          }, 1000);
-        }, 
+        // async verification() {
+        //   console.log(this.user);
+        //   await sendEmailVerification(this.user); 
+        //    console.log(`Email send to  ${auth.currentUser.displayName}` );
+          
+        // },
+
+    
+
+        //  countTimer() {
+        //   this.intervalId = setInterval(() => {
+        //     this.countdown--;
+        //     if (this.countdown === 0) {
+        //         clearInterval(this.intervalId);
+        //          signOut(auth);
+        //     }
+        //   }, 1000);
+        // }, 
 
         fetchUser() {
           auth.onAuthStateChanged( user => {
@@ -94,6 +113,10 @@ import {
               console.log(user)
             }
           })
+        },
+
+        passwordReset(email) {
+           sendPasswordResetEmail(auth, email);
         }
     }
   })
