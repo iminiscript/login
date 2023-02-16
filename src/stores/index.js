@@ -11,7 +11,8 @@ import {
      browserLocalPersistence, 
      updateProfile, 
      sendEmailVerification,
-     sendPasswordResetEmail
+     sendPasswordResetEmail, 
+     signInWithPopup, GoogleAuthProvider
   } from 'firebase/auth';
 
 
@@ -78,11 +79,34 @@ import {
               this.user = auth.currentUser;
         },
 
+        async loginWithGoogle() {
+          try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider );
+             // This gives you a Google Access Token. You can use it to access the Google API.
+            const credential = GoogleAuthProvider.credentialFromResult(result);
+            const token = credential.accessToken;
+            // The signed-in user info.
+            const user = result.user;
+          }catch(error) {
+            console.log(error);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            const email = error.customData.email;
+            const credential = GoogleAuthProvider.credentialFromError(error);
+          }
+        },
+
         async logout() {
           await signOut(auth);
           this.user = false;
           console.log('user Logged out');
         },
+
+        async emailVerification() {
+          await sendEmailVerification(auth.currentUser);
+          console.log(`${auth.currentUser} EMail has been sent`);
+        }, 
 
         // async verification() {
         //   console.log(this.user);
@@ -103,8 +127,8 @@ import {
         //   }, 1000);
         // }, 
 
-        fetchUser() {
-          auth.onAuthStateChanged( user => {
+         fetchUser() {
+           auth.onAuthStateChanged( user => {
             if (user === null) {
               this.user = false;
               console.log('Null')
@@ -115,8 +139,8 @@ import {
           })
         },
 
-        passwordReset(email) {
-           sendPasswordResetEmail(auth, email);
+       async passwordReset(email) {
+          await sendPasswordResetEmail(auth, email);
         }
     }
   })

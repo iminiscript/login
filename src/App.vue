@@ -1,7 +1,6 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router';
 import { ref } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
 import { useLoginStore } from '@/stores/index.js';
 
 
@@ -11,15 +10,19 @@ const loginStore = useLoginStore();
 
 <template>
   <header>
-    
-    <div class="wrapper">
-      <nav>
+   
+      
+        <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
       </nav>
-      <h1> Hello {{  loginStore.user.displayName }}</h1>
-      <button @click="loginStore.logout" v-if="(loginStore.user !== false)">LogOut</button>
-    </div>
+      <div v-if="(loginStore.user !== false)" class="profile">
+        <p class="user"> Hello {{  loginStore.user.displayName }}</p>
+        <button class="btn" @click="loginStore.logout">LogOut</button>
+      </div>
+  
+    
   </header>
 
   <RouterView />
@@ -29,11 +32,25 @@ const loginStore = useLoginStore();
 header {
   line-height: 1.5;
   max-height: 100vh;
+  justify-content: space-between;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  width: 500px;
 }
 
 .logo {
   display: block;
   margin: 0 auto 2rem;
+}
+
+.user {
+  text-transform: uppercase;
+  font-weight: 800;
 }
 
 nav {
@@ -64,7 +81,7 @@ nav a:first-of-type {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+
   }
 
   .logo {
